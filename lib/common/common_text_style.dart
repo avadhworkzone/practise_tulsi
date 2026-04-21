@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:practise/common/responsive.dart';
 import 'package:practise/config/appColor.dart';
 
 class AppTextStyle {
@@ -75,4 +76,11 @@ class AppTextStyle {
         color: const Color(0xFF191B28),
         fontSize: 14,
       );
+}
+
+extension ResponsiveTextStyle on TextStyle {
+  TextStyle responsive(BuildContext context) {
+    if (fontSize == null) return this;
+    return copyWith(fontSize: context.sp(fontSize!));
+  }
 }

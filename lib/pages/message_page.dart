@@ -10,20 +10,20 @@ class MessagePage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildMessageHeader(),
+        _buildMessageHeader(context),
         const SizedBox(height: 24),
         _buildMessageContent(),
       ],
     );
   }
 
-  Widget _buildMessageHeader() {
+  Widget _buildMessageHeader(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Messages', style: AppTextStyle.heading.copyWith(color: AppColor.primaryColor)),
+        Text('Messages', style: AppTextStyle.heading.responsive(context).copyWith(color: AppColor.primaryColor)),
         const SizedBox(height: 8),
-        Text('Check your inbox and notifications', style: AppTextStyle.body),
+        Text('Check your inbox and notifications', style: AppTextStyle.body.responsive(context)),
       ],
     );
   }

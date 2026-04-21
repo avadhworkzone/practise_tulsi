@@ -24,12 +24,12 @@ class SignInPage extends StatelessWidget {
           children: [
             Text(
               'Welcome Back',
-              style: AppTextStyle.heading,
+              style: AppTextStyle.heading.responsive(context),
             ),
             const SizedBox(height: 8),
             Text(
               'Hello there, sign in to continue',
-              style: AppTextStyle.subtitle,
+              style: AppTextStyle.subtitle.responsive(context),
             ),
             const SizedBox(height: 28),
             Center(child: Image.asset(AppImages.signInImage,height: 165,)),
@@ -66,11 +66,11 @@ class SignInPage extends StatelessWidget {
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFF3629B7),
-                  textStyle: AppTextStyle.caption,
+                  textStyle: AppTextStyle.caption.responsive(context),
                 ),
                 child: Text(
                   'Forgot your password ?',
-                  style: AppTextStyle.caption,
+                  style: AppTextStyle.caption.responsive(context),
                 ),
               ),
             ),
@@ -97,7 +97,7 @@ class SignInPage extends StatelessWidget {
               children: [
                 Text(
                   'Don\'t have an account? ',
-                  style: AppTextStyle.bodyGray,
+                  style: AppTextStyle.bodyGray.responsive(context),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -105,7 +105,7 @@ class SignInPage extends StatelessWidget {
                   },
                   child: Text(
                     'Sign Up',
-                    style: AppTextStyle.link,
+                    style: AppTextStyle.link.responsive(context),
                   ),
                 ),
               ],

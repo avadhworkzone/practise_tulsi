@@ -10,20 +10,20 @@ class SearchPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildSearchHeader(),
+        _buildSearchHeader(context),
         const SizedBox(height: 24),
         _buildSearchContent(),
       ],
     );
   }
 
-  Widget _buildSearchHeader() {
+  Widget _buildSearchHeader(context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Search', style: AppTextStyle.heading.copyWith(color: AppColor.primaryColor)),
+        Text('Search', style: AppTextStyle.heading.responsive(context).copyWith(color: AppColor.primaryColor)),
         const SizedBox(height: 8),
-        Text('Find services, payments, and contacts', style: AppTextStyle.body),
+        Text('Find services, payments, and contacts', style: AppTextStyle.body.responsive(context)),
       ],
     );
   }

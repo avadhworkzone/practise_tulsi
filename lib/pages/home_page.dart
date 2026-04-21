@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practise/common/common_text_style.dart';
+import 'package:practise/common/responsive.dart';
 import 'package:practise/config/appColor.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_scaffold.dart';
@@ -32,58 +33,94 @@ class _HomePageState extends State<HomePage> {
     _HomeAction('Beneficiary', Icons.person_outline),
   ];
 
+  late final List<Widget> pages = [
+    _HomeDashboard(controller: controller, actions: actions),
+    const SearchPage(),
+    const MessagePage(),
+    const SettingPage(),
+  ];
+
+  _TabAppBarConfig _currentTabConfig(BuildContext context) {
+    switch (selectedIndex) {
+      case 1:
+        return _TabAppBarConfig(
+          title: 'Search',
+          appColor: AppColor.white,
+          textColor: AppColor.primaryColor
+        );
+      case 2:
+        return _TabAppBarConfig(
+          title: 'Messages',
+          appColor: AppColor.white,
+        );
+      case 3:
+        return _TabAppBarConfig(
+          title: 'Settings',
+          appColor: AppColor.white,
+        );
+      default:
+        return _TabAppBarConfig(
+          title: controller.currentUserName.value.isEmpty
+              ? 'User'
+              : controller.currentUserName.value,
+          appColor: AppColor.primaryColor,
+          image: 'https://i.pravatar.cc/150?img=32',
+          action: Stack(
+            children: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.notifications_none, color: Colors.white),
+              ),
+              Positioned(
+                right: 10,
+                top: 8,
+                child: Container(
+                  height: 18,
+                  width: 18,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '3',
+                    style: AppTextStyle.whiteTitle.copyWith(
+                      fontSize: context.sp(10),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tabConfig = _currentTabConfig(context);
+
     return AuthScaffold(
-      title: controller.currentUserName.value.isEmpty ? 'User' : controller.currentUserName.value,
-      appColor: AppColor.primaryColor,
-      textColor: AppColor.white,
+      title: tabConfig.title,
+      appColor: tabConfig.appColor,
+      textColor: tabConfig.textColor,
       showBackButton: false,
-      image: 'https://i.pravatar.cc/150?img=32',
-      action: Stack(
-        children: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications_none, color: Colors.white),
-          ),
-          Positioned(
-            right: 10,
-            top: 8,
-            child: Container(
-              height: 18,
-              width: 18,
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text('3', style: AppTextStyle.whiteTitle.copyWith(fontSize: 10)),
-            ),
-          ),
-        ],
-      ),
+      image: tabConfig.image,
+      action: tabConfig.action,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (selectedIndex == 0) ...[
-                    _buildCard(),
-                    const SizedBox(height: 28),
-                    _buildActionGrid(),
-                  ] else if (selectedIndex == 1) ...[
-                    const SearchPage(),
-                  ] else if (selectedIndex == 2) ...[
-                    const MessagePage(),
-                  ] else ...[
-                    const SettingPage(),
-                  ],
-                ],
-              ),
+            child: IndexedStack(
+              index: selectedIndex,
+              children: pages
+                  .map(
+                    (page) => SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                      child: page,
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           _buildBottomNav(),
@@ -92,27 +129,144 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildBottomNav() {
+    final items = [
+      _BottomNavItem('Home', Icons.home),
+      _BottomNavItem('Search', Icons.search),
+      _BottomNavItem('Message', Icons.mail_outline),
+      _BottomNavItem('Setting', Icons.settings),
+    ];
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: const [
+          BoxShadow(
+            color: Color.fromRGBO(54, 41, 183, 0.08),
+            blurRadius: 20,
+            offset: Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: items.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          final active = index == selectedIndex;
+          return InkWell(
+            borderRadius: BorderRadius.circular(28),
+            onTap: () => setState(() => selectedIndex = index),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+              padding: EdgeInsets.symmetric(
+                horizontal: active ? 16 : 10,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                color: active ? AppColor.primaryColor : Colors.transparent,
+                borderRadius: BorderRadius.circular(28),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    item.icon,
+                    color: active ? Colors.white : const Color(0xFF8F8F9F),
+                    size: 22,
+                  ),
+                  if (active) ...[
+                    const SizedBox(width: 8),
+                    Text(
+                      item.label,
+                      style: AppTextStyle.caption
+                          .responsive(context)
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
 
-  Widget _buildCard() {
+class _HomeAction {
+  final String label;
+  final IconData icon;
+
+  _HomeAction(this.label, this.icon);
+}
+
+class _TabAppBarConfig {
+  final String title;
+  final String? image;
+  final Color appColor;
+  final Color textColor;
+  final Widget? action;
+
+  const _TabAppBarConfig({
+    required this.title,
+    required this.appColor,
+    this.image,
+    this.textColor = AppColor.white,
+    this.action,
+  });
+}
+
+class _BottomNavItem {
+  final String label;
+  final IconData icon;
+
+  _BottomNavItem(this.label, this.icon);
+}
+
+class _HomeDashboard extends StatelessWidget {
+  final AuthController controller;
+  final List<_HomeAction> actions;
+
+  const _HomeDashboard({required this.controller, required this.actions});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildCard(context),
+        const SizedBox(height: 28),
+        _buildActionGrid(context),
+      ],
+    );
+  }
+
+  Widget _buildCard(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned(
-          right: 16,
-          top: 24,
-          child: Container(
-            height: 190,
-            width: MediaQuery.of(context).size.width - 92,
-            decoration: BoxDecoration(
-              color: const Color(0xFF5152C5),
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-        ),
+        // Positioned(
+        //   right: 16,
+        //   top: 24,
+        //   child: Container(
+        //     height: 190,
+        //     width: MediaQuery.of(context).size.width - 92,
+        //     decoration: BoxDecoration(
+        //       color: const Color(0xFF5152C5),
+        //       borderRadius: BorderRadius.circular(30),
+        //     ),
+        //   ),
+        // ),
         ClipRRect(
           borderRadius: BorderRadius.circular(30),
           child: Container(
-            padding: const EdgeInsets.all(0),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF27238D), Color(0xFF3B44F0)],
@@ -131,31 +285,34 @@ class _HomePageState extends State<HomePage> {
             child: Stack(
               children: [
                 Positioned(
-                  right: -20,
-                  top: -20,
+                  right: -100,
+                  top: -60,
                   child: Container(
-                    height: 120,
-                    width: 120,
-                    decoration: const BoxDecoration(
+                    height: 190,
+                    width: 190,
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color(0xFF6DB6FF),
+                      color: AppColor.c4EB4FF,
                     ),
                   ),
                 ),
                 Positioned(
                   left: -100,
-                  top:-60,
+                  top: -60,
                   child: Container(
                     height: 350,
                     width: 350,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color(0xFF1C1A6F),
+                      color: AppColor.c1E1671,
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -167,46 +324,71 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Obx(
                                   () => Text(
-                                    controller.currentUserName.value.isEmpty ? 'Your Card' : controller.currentUserName.value,
-                                    style: AppTextStyle.whiteTitle.copyWith(fontSize: 22, fontWeight: FontWeight.w700),
+                                    controller.currentUserName.value.isEmpty
+                                        ? 'Your Card'
+                                        : controller.currentUserName.value,
+                                    style: AppTextStyle.whiteTitle.copyWith(
+                                      fontSize: context.sp(22),
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                Text('Amazon Platinum', style: AppTextStyle.whiteTitle.copyWith(color: Colors.white70, fontSize: 14)),
+                                Text(
+                                  'Amazon Platinum',
+                                  style: AppTextStyle.whiteTitle.copyWith(
+                                    color: Colors.white70,
+                                    fontSize: context.sp(14),
+                                  ),
+                                ),
                               ],
-                            ),
-                          ),
-                          Container(
-                            height: 44,
-                            width: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withAlpha(45),
-                              borderRadius: BorderRadius.circular(14),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 28),
-                      Text('4756  ••••  ••••  9018', style: AppTextStyle.whiteTitle.copyWith(fontSize: 16, letterSpacing: 1.6)),
+                      Text(
+                        '4756  ••••  ••••  9018',
+                        style: AppTextStyle.whiteTitle.copyWith(
+                          fontSize: context.sp(16),
+                          letterSpacing: 1.6,
+                        ),
+                      ),
                       const SizedBox(height: 22),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Balance', style: AppTextStyle.whiteTitle.copyWith(color: Colors.white70, fontSize: 12)),
+                              Text(
+                                'Balance',
+                                style: AppTextStyle.whiteTitle.copyWith(
+                                  color: Colors.white70,
+                                  fontSize: context.sp(12),
+                                ),
+                              ),
                               const SizedBox(height: 6),
-                              Text('\$3,469.52', style: AppTextStyle.whiteTitle.copyWith(fontSize: 28, fontWeight: FontWeight.w700)),
+                              Text(
+                                '\$3,469.52',
+                                style: AppTextStyle.whiteTitle.copyWith(
+                                  fontSize: context.sp(28),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ],
                           ),
                           const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withAlpha(45),
-                              borderRadius: BorderRadius.circular(18),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Text(
+                              'VISA',
+                              style: AppTextStyle.whiteTitle.copyWith(
+                                fontWeight: FontWeight.w700,
+                                fontSize: context.sp(14),
+                              ),
                             ),
-                            child: Text('VISA', style: AppTextStyle.whiteTitle.copyWith(fontWeight: FontWeight.w700, fontSize: 14)),
                           ),
                         ],
                       ),
@@ -221,7 +403,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildActionGrid() {
+  Widget _buildActionGrid(BuildContext context) {
     return GridView.builder(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
@@ -262,7 +444,10 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 12),
               Text(
                 item.label,
-                style: AppTextStyle.body.copyWith(fontSize: 12, color: const Color(0xFF5E5E78)),
+                style: AppTextStyle.body.copyWith(
+                  fontSize: context.sp(12),
+                  color: const Color(0xFF5E5E78),
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -271,63 +456,4 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-
-  Widget _buildBottomNav() {
-    final items = [
-      _BottomNavItem('Home', Icons.home),
-      _BottomNavItem('Search', Icons.search),
-      _BottomNavItem('Message', Icons.mail_outline),
-      _BottomNavItem('Setting', Icons.settings),
-    ];
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(54, 41, 183, 0.08),
-            blurRadius: 20,
-            offset: Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: items.asMap().entries.map((entry) {
-          final index = entry.key;
-          final item = entry.value;
-          final active = index == selectedIndex;
-          return GestureDetector(
-            onTap: () => setState(() => selectedIndex = index),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(item.icon, color: active ? AppColor.primaryColor : const Color(0xFF9E9EAF)),
-                const SizedBox(height: 6),
-                Text(
-                  item.label,
-                  style: AppTextStyle.caption.copyWith(color: active ? AppColor.primaryColor : const Color(0xFF9E9EAF)),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class _HomeAction {
-  final String label;
-  final IconData icon;
-
-  _HomeAction(this.label, this.icon);
-}
-
-class _BottomNavItem {
-  final String label;
-  final IconData icon;
-
-  _BottomNavItem(this.label, this.icon);
 }

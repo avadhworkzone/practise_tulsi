@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:practise/common/common_button.dart';
 import 'package:practise/common/common_text_field.dart';
 import 'package:practise/common/common_text_style.dart';
+import 'package:practise/common/responsive.dart';
 import 'package:practise/config/appColor.dart';
 import 'package:practise/config/appImage.dart';
 
@@ -36,9 +37,9 @@ class ForgotPasswordPage extends StatelessWidget {
                               : phase == ForgotPhase.resetPassword
                                   ? ''
                                   : '',
-                      style: AppTextStyle.subtitle.copyWith(
+                      style: AppTextStyle.subtitle.responsive(context).copyWith(
                         color:AppColor.c979797,
-                        fontSize: 14,
+                        fontSize: context.sp(14),
                         fontWeight: FontWeight.w600
                       ),
                     ),
@@ -74,7 +75,7 @@ class ForgotPasswordPage extends StatelessWidget {
                               text: 'Resend',
                               onPressed: controller.canSendOtp ? controller.sendOtp : null,
                               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                              textStyle: AppTextStyle.whiteTitle.copyWith(fontWeight: FontWeight.w600),
+                              textStyle: AppTextStyle.whiteTitle.responsive(context).copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],
@@ -122,7 +123,7 @@ class ForgotPasswordPage extends StatelessWidget {
                         children: [
                           RichText(
                             text: TextSpan(
-                              style: AppTextStyle.body.copyWith(color: AppColor.c898989),
+                              style: AppTextStyle.body.responsive(context).copyWith(color: AppColor.c898989),
                               children: [
                                 const TextSpan(
                                   text: 'We texted you a code to verify your phone number ',
@@ -130,7 +131,7 @@ class ForgotPasswordPage extends StatelessWidget {
                                 ),
                                 TextSpan(
                                   text: controller.phone.value.trim(),
-                                  style: AppTextStyle.body.copyWith(
+                                  style: AppTextStyle.body.responsive(context).copyWith(
                                     color: AppColor.primaryColor,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -141,7 +142,7 @@ class ForgotPasswordPage extends StatelessWidget {
                           const SizedBox(height: 10),
                           Text(
                             'This code will expire 10 minutes after this message. If you don\'t get a message, please try again.',
-                            style: AppTextStyle.body.copyWith(color: AppColor.c898989),
+                            style: AppTextStyle.body.responsive(context).copyWith(color: AppColor.c898989),
                           ),
                         ],
                       ),
@@ -153,7 +154,7 @@ class ForgotPasswordPage extends StatelessWidget {
                         children: [
                           Text(
                             'We texted you a code to verify your phone number',
-                              style: AppTextStyle.bodyGray.copyWith(color: Colors.black,fontSize: 14),
+                              style: AppTextStyle.bodyGray.responsive(context).copyWith(color: Colors.black,fontSize: context.sp(14)),
                           ),
                           SizedBox(height: 20,)
                         ],
@@ -166,13 +167,13 @@ class ForgotPasswordPage extends StatelessWidget {
                           const SizedBox(height: 25),
                           Text(
                             'Change password successfully!',
-                            style: AppTextStyle.heading.copyWith(fontSize: 16,color: AppColor.primaryColor),
+                            style: AppTextStyle.heading.responsive(context).copyWith(fontSize: context.sp(16),color: AppColor.primaryColor),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 20),
                           Text(
                             'You have successfully changed your password. Please use the new password when signing in.',
-                            style: AppTextStyle.bodyGray.copyWith(color: Colors.black,fontSize: 13),
+                            style: AppTextStyle.bodyGray.responsive(context).copyWith(color: Colors.black,fontSize: context.sp(13)),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 30),

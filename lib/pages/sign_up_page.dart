@@ -25,12 +25,12 @@ class SignUpPage extends StatelessWidget {
           children: [
             Text(
               'Welcome to us,',
-              style: AppTextStyle.heading,
+              style: AppTextStyle.heading.responsive(context),
             ),
             const SizedBox(height: 8),
             Text(
               'Hello there, create New account',
-              style: AppTextStyle.subtitle,
+              style: AppTextStyle.subtitle.responsive(context),
             ),
             const SizedBox(height: 28),
            Center(child: Image.asset(AppImages.signUpImage,height: 165,)),
@@ -55,6 +55,10 @@ class SignUpPage extends StatelessWidget {
               onChanged: (value) => controller.phone.value = value,
             ),
             const SizedBox(height: 16),
+
+
+
+
             Obx(
               () => buildTextField(
                 context: context,
@@ -80,7 +84,7 @@ class SignUpPage extends StatelessWidget {
                 onChanged: (_) => controller.toggleTermsAccepted(),
                 title: RichText(
                   text: TextSpan(
-                      style: AppTextStyle.body,
+                      style: AppTextStyle.body.responsive(context),
                       children: [
                         const TextSpan(
                           text: 'By creating an account you agree to our ',
@@ -88,7 +92,7 @@ class SignUpPage extends StatelessWidget {
                         ),
                         TextSpan(
                           text: 'Terms and Conditions',
-                          style: AppTextStyle.link,
+                          style: AppTextStyle.link.responsive(context),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               Get.snackbar(
@@ -118,7 +122,7 @@ class SignUpPage extends StatelessWidget {
               children: [
                 Text(
                   'Have one account? ',
-                  style: AppTextStyle.bodyGray,
+                  style: AppTextStyle.bodyGray.responsive(context),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -126,7 +130,7 @@ class SignUpPage extends StatelessWidget {
                   },
                   child: Text(
                     'Sign in',
-                    style: AppTextStyle.link,
+                    style: AppTextStyle.link.responsive(context),
                   ),
                 ),
               ],

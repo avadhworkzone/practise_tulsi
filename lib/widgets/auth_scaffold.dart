@@ -67,12 +67,11 @@ class AuthScaffold extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: textColor == AppColor.black ? AppTextStyle.appBarBlackTitle : AppTextStyle.appBarTitle,
-                      ),
-                    ),
-
-                   action ?? SizedBox.shrink()
-                  ],
+                        style: (textColor == AppColor.black ? AppTextStyle.appBarBlackTitle : AppTextStyle.appBarTitle)
+                            .responsive(context),
+                      )),
+                    action??SizedBox.shrink()
+                  ]
                 ),
               ),
             ),

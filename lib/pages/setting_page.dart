@@ -10,20 +10,20 @@ class SettingPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildSettingHeader(),
+        _buildSettingHeader(context),
         const SizedBox(height: 24),
         _buildSettingContent(),
       ],
     );
   }
 
-  Widget _buildSettingHeader() {
+  Widget _buildSettingHeader(context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Settings', style: AppTextStyle.heading.copyWith(color: AppColor.primaryColor)),
+        Text('Settings', style: AppTextStyle.heading.responsive(context).copyWith(color: AppColor.primaryColor)),
         const SizedBox(height: 8),
-        Text('Update your profile and app preferences', style: AppTextStyle.body),
+        Text('Update your profile and app preferences', style: AppTextStyle.body.responsive(context)),
       ],
     );
   }
